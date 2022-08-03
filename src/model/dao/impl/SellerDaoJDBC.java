@@ -10,7 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SellerDaoJDBC implements SellerDao {
 
@@ -79,6 +82,71 @@ public class SellerDaoJDBC implements SellerDao {
         }
     }
 
+    @Override
+    public List<Seller> findAll() {
+        return null;
+    }
+
+    @Override
+    public List<Seller> findByDepartment(Department department) {
+
+        PreparedStatement st = null; //"enviador de clausulas"
+        ResultSet rs = null; // "recebedor de resultados"
+
+        try {
+            st = conn.prepareStatement("SELECT seller.*, department.name AS DepName " +
+                    "FROM seller " +
+                    "INNER JOIN department " +
+                    "ON seller.DepartmentId = department.Id " +
+                    "WHERE DepartmentId = ? " +
+                    "ORDER BY Name;");
+
+            st.setInt(1, department.getId());
+
+            rs = st.executeQuery();
+
+            List<Seller> list = new ArrayList<>();
+            Map<Integer, Department> map = new HashMap<>();
+
+            //enquanto houver valores no ResultSet
+            while (rs.next()){
+
+                //tentando buscar no meu map o dep com o
+                //id buscado, se o id não existir no map
+                // dep = null
+                Department dep = map.get(rs.getInt("DepartmentId"));
+
+                //se o departamento já não estava em map, iremos
+                //instanciar o novo departamento no java, enviando o ResultSet
+                //e então adicionar esse departamento na map de
+                //departamentos já criados.
+                if (dep == null){
+                    dep = instantiateDepartment(rs);
+
+                    map.put(rs.getInt("DepartmentId"), dep);
+                }
+
+                //instanciando o vendedor no java
+                Seller seller = instantiateSeller(rs, dep);
+                list.add(seller);
+            }
+
+            //se não veio registro
+            return list;
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            //fechando o enviador de clausulas
+            DB.closeStatement(st);
+
+            //fechando o recebedor de resultados
+            DB.closeResultSet(rs);
+        }
+
+    }
+
     private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
         Seller seller = new Seller();
         //setanto o id do vendedor para o valor
@@ -119,10 +187,5 @@ public class SellerDaoJDBC implements SellerDao {
         dep.setName(rs.getString("DepName"));
 
         return dep;
-    }
-
-    @Override
-    public List<Seller> findAll() {
-        return null;
     }
 }
