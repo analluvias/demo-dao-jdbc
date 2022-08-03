@@ -9,14 +9,11 @@ import java.util.Date;
 
 public class Program {
     public static void main(String[] args) {
-        var obj = new Department(1, "Books");
-
-        var seller = new Seller(21, "Bob", "Bob@gmail.com",
-                new Date(), 3000.0, obj);
-
         //criando um SellerDao, mas chamando uma classe
         //que instancia ele lá.
         var sellerDao = DaoFactory.createSellerDao();
+
+        Seller seller = sellerDao.findById(3);
 
         System.out.print(seller);
     }
