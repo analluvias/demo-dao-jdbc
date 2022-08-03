@@ -13,6 +13,7 @@ public class Program {
         //que instancia ele lá.
         var sellerDao = DaoFactory.createSellerDao();
 
+        System.out.println("=== teste 1: seller findById===");
         Seller seller = sellerDao.findById(3);
 
         System.out.print(seller);

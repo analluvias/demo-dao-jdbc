@@ -55,41 +55,11 @@ public class SellerDaoJDBC implements SellerDao {
             if (rs.next()){
 
                 //criando o departamento no java
-                Department dep = new Department();
-                //setando o id de dep para o valor dentro do ResultSet
-                //no campo DepartmentId
-                dep.setId(rs.getInt("DepartmentId"));
-
-                //setando o nome de dep para o valor dentro do ResultSet
-                //no campo DepName
-                dep.setName(rs.getString("DepName"));
+                Department dep = instantiateDepartment(rs);
 
 
                 //instanciando o vendedor no java
-                Seller seller = new Seller();
-                //setanto o id do vendedor para o valor
-                //guardado no ResultSet
-                seller.setId(rs.getInt("Id"));
-
-                //setanto o nome do vendedor para o valor
-                //guardado no ResultSet
-                seller.setName(rs.getString("Name"));
-
-                //setanto o email do vendedor para o valor
-                //guardado no ResultSet
-                seller.setEmail(rs.getString("Email"));
-
-                //setanto o salario base do vendedor para o valor
-                //guardado no ResultSet
-                seller.setBaseSalary(rs.getDouble("BaseSalary"));
-
-                //setanto o aniversario do vendedor para o valor
-                //guardado no ResultSet
-                seller.setBithDate(rs.getDate("BirthDate"));
-
-                //setanto o departamento do vendedor para o dep
-                //criado acima
-                seller.setDepartment(dep);
+                Seller seller = instantiateSeller(rs, dep);
 
                 return seller;
             }
@@ -107,6 +77,48 @@ public class SellerDaoJDBC implements SellerDao {
             //fechando o recebedor de resultados
             DB.closeResultSet(rs);
         }
+    }
+
+    private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+        Seller seller = new Seller();
+        //setanto o id do vendedor para o valor
+        //guardado no ResultSet
+        seller.setId(rs.getInt("Id"));
+
+        //setanto o nome do vendedor para o valor
+        //guardado no ResultSet
+        seller.setName(rs.getString("Name"));
+
+        //setanto o email do vendedor para o valor
+        //guardado no ResultSet
+        seller.setEmail(rs.getString("Email"));
+
+        //setanto o salario base do vendedor para o valor
+        //guardado no ResultSet
+        seller.setBaseSalary(rs.getDouble("BaseSalary"));
+
+        //setanto o aniversario do vendedor para o valor
+        //guardado no ResultSet
+        seller.setBithDate(rs.getDate("BirthDate"));
+
+        //setanto o departamento do vendedor para o dep
+        //criado acima
+        seller.setDepartment(dep);
+
+        return seller;
+    }
+
+    private Department instantiateDepartment(ResultSet rs) throws SQLException {
+        Department dep = new Department();
+        //setando o id de dep para o valor dentro do ResultSet
+        //no campo DepartmentId
+        dep.setId(rs.getInt("DepartmentId"));
+
+        //setando o nome de dep para o valor dentro do ResultSet
+        //no campo DepName
+        dep.setName(rs.getString("DepName"));
+
+        return dep;
     }
 
     @Override
